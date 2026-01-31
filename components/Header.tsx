@@ -102,7 +102,7 @@ export default function Header() {
                     >
                       الأخبار
                     </Link>
-                    <Link
+                    {/* <Link
                       href="/reports"
                       className="block px-4 py-2 text-white hover:bg-gray-800 hover:text-red-500"
                     >
@@ -113,7 +113,7 @@ export default function Header() {
                       className="block px-4 py-2 text-white hover:bg-gray-800 hover:text-red-500"
                     >
                       المقالات
-                    </Link>
+                    </Link> */}
                   </div>
                 )}
               </div>
@@ -250,7 +250,7 @@ export default function Header() {
                     >
                       الأخبار
                     </Link>
-                    <Link
+                    {/* <Link
                       href="/reports"
                       className="text-white hover:text-red-500 transition-colors"
                     >
@@ -261,7 +261,7 @@ export default function Header() {
                       className="text-white hover:text-red-500 transition-colors"
                     >
                       المقالات
-                    </Link>
+                    </Link> */}
                   </div>
                 )}
               </div>

@@ -1,11 +1,1 @@
-{
-  "version": 4,
-  "routes": {},
-  "dynamicRoutes": {},
-  "notFoundRoutes": [],
-  "preview": {
-    "previewModeId": "c3ca29e429e7483a2a34e262cdf89382",
-    "previewModeSigningKey": "2961928111e573ad7b4063bd303bf532ef00ee297a8b0510af7715b28f9bcdff",
-    "previewModeEncryptionKey": "74d8f750d3518e9ddfc828bbbb13dcf5e34b7b9437e3b7a9f02a2d382a4d435c"
-  }
-}
+{"version":4,"routes":{"/watch/series/1":{},"/watch/series/2":{},"/watch/series/3":{},"/watch/series/4":{},"/watch/series/5":{},"/watch/series/6":{},"/watch/movies/1":{},"/watch/movies/2":{},"/watch/kids/1":{},"/watch/programs/1":{},"/watch/podcasts/1":{},"/watch/plays/1":{},"/actorsprofile/1":{},"/actorsprofile/2":{},"/actorsprofile/3":{},"/actorsprofile/4":{},"/actorsprofile/5":{},"/actorsprofile/6":{},"/actorsprofile/7":{},"/actorsprofile/8":{},"/actorsprofile/9":{},"/actorsprofile/10":{},"/actorsprofile/11":{},"/actorsprofile/12":{},"/actorsprofile/13":{},"/actorsprofile/14":{},"/actorsprofile/15":{},"/actorsprofile/16":{},"/actorsprofile/17":{},"/actorsprofile/18":{},"/actorsprofile/19":{},"/actorsprofile/20":{}},"dynamicRoutes":{"/watch/[type]/[id]":{"dataRoute":null,"dataRouteRegex":null,"fallback":null,"fallbackRevalidate":false,"fallbackSourceRoute":"/watch/[type]/[id]","routeRegex":"^\\/watch\\/([^/]+?)\\/([^/]+?)(?:\\/)?$","allowHeader":[]},"/actorsprofile/[id]":{"dataRoute":null,"dataRouteRegex":null,"fallback":null,"fallbackRevalidate":false,"fallbackSourceRoute":"/actorsprofile/[id]","routeRegex":"^\\/actorsprofile\\/([^/]+?)(?:\\/)?$","allowHeader":[]}},"notFoundRoutes":[],"preview":{"previewModeId":"ba245625c3301ea4fd3e14575e240728","previewModeSigningKey":"133fb82ea078098ba64e03de2a02014cd8db14d56d5b6d32b489138fbe664304","previewModeEncryptionKey":"5c40ce2622683c78d89fc0d211768092cd23ac81db8a9fc67344c6a1339b2d3a"}}

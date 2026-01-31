@@ -11,22 +11,7 @@ export default function NewsHome() {
     <div className="bg-white">
       <Header />
 
-      <nav className="bg-gray-900 text-white py-3 pt-20 px-6 flex justify-center items-center">
-        <div className="flex items-center space-x-reverse space-x-6">
-          <Link
-            href="/news"
-            className="bg-red-600 px-3 py-1 rounded-md text-sm"
-          >
-            الأخبار
-          </Link>
-          <Link href="/reports" className="hover:text-red-500">
-            التقارير
-          </Link>
-          <Link href="/articles" className="hover:text-red-500">
-            المقالات
-          </Link>
-        </div>
-      </nav>
+     
 
       {/* قسم الهيرو */}
       <section
@@ -71,8 +56,8 @@ export default function NewsHome() {
 
       <BreakingNews />
       {/* قسم آخر الأخبار */}
-      {/* <section className="py-10 px-6 bg-black  ">
-        <h3 className="text-2xl font-bold mb-6 text-white">آخر الأخبار</h3>
+      <section className="py-10 px-6 bg-black  ">
+        <h3 className="text-2xl font-bold mb-6 text-white"> الأخبار</h3>
         <div className="grid md:grid-cols-3 gap-6">
           {[1, 2, 3].map((item) => (
             <div
@@ -104,7 +89,7 @@ export default function NewsHome() {
             ← جميع الأخبار
           </Link>
         </div>
-      </section> */}
+      </section>
       <Footer />
     </div>
   );

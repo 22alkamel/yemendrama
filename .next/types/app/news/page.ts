@@ -1,4 +1,4 @@
-// File: D:\yemendrama\app\news\page.tsx
+// File: D:\yemendrama\yemendrama\app\news\page.tsx
 import * as entry from '../../../../app/news/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

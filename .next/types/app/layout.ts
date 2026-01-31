@@ -1,4 +1,4 @@
-// File: D:\yemendrama\app\layout.tsx
+// File: D:\yemendrama\yemendrama\app\layout.tsx
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
