@@ -1,0 +1,16 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/kids/page": "/kids",
+  "/about/page": "/about",
+  "/movies/page": "/movies",
+  "/actors/page": "/actors",
+  "/plays/page": "/plays",
+  "/page": "/",
+  "/news/page": "/news",
+  "/programs/page": "/programs",
+  "/series/page": "/series",
+  "/podcasts/page": "/podcasts",
+  "/details/[type]/[id]/page": "/details/[type]/[id]",
+  "/actorsprofile/[id]/page": "/actorsprofile/[id]",
+  "/watch/[type]/[id]/page": "/watch/[type]/[id]"
+}

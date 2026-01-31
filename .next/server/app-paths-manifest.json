@@ -1,8 +1,16 @@
 {
-  "/page": "app/page.js",
-  "/actors/page": "app/actors/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/kids/page": "app/kids/page.js",
-  "/actorsprofile/[id]/page": "app/actorsprofile/[id]/page.js",
   "/about/page": "app/about/page.js",
-  "/_not-found/page": "app/_not-found/page.js"
+  "/movies/page": "app/movies/page.js",
+  "/actors/page": "app/actors/page.js",
+  "/plays/page": "app/plays/page.js",
+  "/page": "app/page.js",
+  "/news/page": "app/news/page.js",
+  "/programs/page": "app/programs/page.js",
+  "/series/page": "app/series/page.js",
+  "/podcasts/page": "app/podcasts/page.js",
+  "/details/[type]/[id]/page": "app/details/[type]/[id]/page.js",
+  "/actorsprofile/[id]/page": "app/actorsprofile/[id]/page.js",
+  "/watch/[type]/[id]/page": "app/watch/[type]/[id]/page.js"
 }
