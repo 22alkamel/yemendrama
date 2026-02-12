@@ -26,17 +26,17 @@ interface Episode {
 }
 
 interface Series {
-  id: number;
+  id: string;
   title: string;
   description: string;
   image: string;   // صورة رئيسية للمسلسل
   cardimg: string; // صورة البطاقة
   rating: number;
-  year: number;
+  year: string | number;  // نسمح بالنص أو الرقم
   genre: string;
   crew: Crew;      // بيانات الطاقم
   episodes: Episode[]; 
-  seasons:number;// قائمة الحلقات
+  seasons: number; // عدد المواسم
 }
 
 

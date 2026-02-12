@@ -1,89 +1,62 @@
-"use client";
-
-import Link from "next/link";
+import { Content } from "@/types/content";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import HeroSlider from "../components/HeroSlider";
-import MovieCard from "../components/MovieCard";
+import MovieSection from "../components/MovieSection";
+import { getPublishedContents } from "@/services/content.service";
 
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css/autoplay";
+export const metadata = {
+  title: "YemenDrama - الصفحة الرئيسية",
+  description: "مشاهدة مسلسلات، أفلام، برامج وبودكاست يمانية عالية الجودة",
+  openGraph: {
+    title: "YemenDrama",
+    description: "مشاهدة مسلسلات وأفلام يمانية عالية الجودة",
+    type: "website",
+    url: "https://yemendrama.com",
+    images: [
+      {
+        url: "https://yemendrama.com/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "YemenDrama",
+      },
+    ],
+  },
+};
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Autoplay } from "swiper/modules";
+export default async function Home() {
+  const data = await getPublishedContents();
+  const contents: Content[] = Array.isArray(data.data) ? data.data : [];
 
-// import { featuredMovies } from "../data/moviesData";
-import { series } from "../data/series";
-import { movies } from "../data/movies";
-import { kids } from "../data/kids";
-import { programs } from "../data/programs";
-import { podcasts } from "../data/podcasts";
-import { plays } from "../data/plays";
-
-export default function Home() {
   return (
     <div className="min-h-screen bg-black text-white">
       <Header />
 
-      <HeroSlider movies={series} />
+      <HeroSlider
+        movies={contents
+          .filter((c: Content) => c.type === "series")
+          .map((c) => ({
+            id: c.uuid,
+            title: c.title,
+            description: c.description ?? "",
+            image: `http://127.0.0.1:8000${c.poster_image ?? c.card_image}`,
+            rating: c.rating ?? 0,
+            year: c.year ?? "",
+            genre: c.categories?.map((cat) => cat.name).join(", ") ?? "",
+          }))}
+      />
 
       <div className="px-4 md:px-8 lg:px-16 py-12 space-y-16">
-        {/* دالة مشتركة ترندر أي قسم */}
-        {renderSection("المسلسلات", "/series", series, "series")}
-        {renderSection("الأفلام", "/movies", movies, "movies")}
-        {renderSection("البرامج", "/programs", programs, "programs")}
-        {renderSection("البودكاست", "/podcasts", podcasts, "podcasts")}
-        {renderSection("المسرحيات", "/plays", plays, "plays")}
-        {renderSection("الأطفال", "/kids", kids, "kids")}
+        <MovieSection title="المسلسلات" link="/series" contents={contents} type="series" />
+        <MovieSection title="الأفلام" link="/movies" contents={contents} type="movie" />
+        <MovieSection title="البرامج" link="/programs" contents={contents} type="program" />
+        <MovieSection title="البودكاست" link="/podcasts" contents={contents} type="podcast" />
+        <MovieSection title="المسرحيات" link="/plays" contents={contents} type="play" />
+        <MovieSection title="الأطفال" link="/kids" contents={contents} type="kids" />
       </div>
 
       <Footer />
     </div>
   );
-}
 
-// 🔹 مكون يعرض كل قسم كسلايدر
-function renderSection(title: string, link: string, data: any[], type: string) {
-  return (
-    <section>
-      <div className="flex items-center mb-8 justify-between">
-        <h2 className="text-2xl md:text-3xl font-bold text-white">{title}</h2>
-        <Link
-          href={link}
-          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-s font-medium transition-colors whitespace-nowrap cursor-pointer flex items-center space-x-1"
-        >
-          <span>عرض الكل</span>
-        </Link>
-      </div>
-
-      {/* 🔥 سلايدر Swiper */}
-      <Swiper
-        modules={[Navigation, Autoplay]}
-        spaceBetween={16}
-        // navigation
-        loop={true}
-        autoplay={{
-          delay: 2000,
-          disableOnInteraction: false,
-          pauseOnMouseEnter: true, // يوقف عند مرور الماوس
-        }}
-        grabCursor={true} // سحب بالماوس
-        slidesPerView={2}
-        breakpoints={{
-          640: { slidesPerView: 2 },
-          768: { slidesPerView: 3 },
-          1024: { slidesPerView: 6 },
-        }}
-        className="w-full"
-      >
-        {data.map((item) => (
-          <SwiperSlide key={item.id}>
-            <MovieCard movie={item} type={type} />
-          </SwiperSlide>
-        ))}
-      </Swiper>
-    </section>
-  );
 }

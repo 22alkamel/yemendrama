@@ -7,13 +7,17 @@ import { useState } from 'react';
 type ContentType = 'series' | 'movies' | 'kids' | 'programs' | 'podcasts' | 'plays';
 
 interface Movie {
-  id: number;
+  id: string;
   title: string;
-  image: string;
-  cardimg: string;
+  description:string;
+  genre:string;
+  cardimg: string;      // صورة الكرت
+  image?: string;       // اختياري (للبوستر أو hero)
   rating: number;
-  year: number;
+  year: string | number; 
+  
 }
+
 
 interface MovieCardProps {
   movie: Movie;

@@ -1,63 +1,68 @@
-import { series } from "../../../../data/series";
-import { movies } from "../../../../data/movies";
-import { kids } from "../../../../data/kids";
-import { programs } from "../../../../data/programs";
-import { podcasts } from "../../../../data/podcasts";
-import { plays } from "../../../../data/plays";
-import { Show } from "../../../../models/type";
-import { actors } from "../../../../data/actors";
+import DetailsClient from "./DetailsClient";
+import { Content } from "../../../../types/content";
 import { Actor } from "../../../../models/actortype";
 
-import DetailsClient from "./DetailsClient";
-
 interface DetailsPageProps {
-  params: Promise<{ type: string; id: string }>; // ✅ params أصبحت Promise
+  params: { type: string; id: string } | Promise<{ type: string; id: string }>;
 }
 
-export async function generateStaticParams() {
-  return [
-    ...series.map((item) => ({ type: "series", id: item.id.toString() })),
-    ...movies.map((item) => ({ type: "movies", id: item.id.toString() })),
-    ...kids.map((item) => ({ type: "kids", id: item.id.toString() })),
-    ...programs.map((item) => ({ type: "programs", id: item.id.toString() })),
-    ...podcasts.map((item) => ({ type: "podcasts", id: item.id.toString() })),
-    ...plays.map((item) => ({ type: "plays", id: item.id.toString() })),
-  ];
-}
+export default async function DetailsPage(props: DetailsPageProps) {
+  const { params } = props;
+  const { type, id } = "then" in params ? await params : params; // يدعم Promise أو كائن عادي
 
-// الصفحة نفسها async
-export default async function DetailsPage({ params }: DetailsPageProps) {
-  const { type, id } = await params; // ✅ ننتظر الـ params
+  try {
+    const res = await fetch(`http://localhost:8000/api/v1/contents`, {
+      cache: "no-store",
+      // إذا احتجت توكن:
+      // headers: {
+      //   Authorization: `Bearer ${process.env.API_TOKEN}`,
+      // },
+    });
 
-  let allData: Show[] = [];
-  if (type === "series") allData = series;
-  else if (type === "movies") allData = movies;
-  else if (type === "kids") allData = kids;
-  else if (type === "programs") allData = programs;
-  else if (type === "podcasts") allData = podcasts;
-  else if (type === "plays") allData = plays;
+    console.log("Response status:", res.status);
 
-  const show = allData.find((item) => item.id.toString() === id);
-  if (!show) return <p>المحتوى غير موجود</p>;
+    if (!res.ok) {
+      console.error("API returned error:", res.statusText);
+      return (
+        <p className="text-white text-center mt-20">المحتوى غير موجود</p>
+      );
+    }
 
-  // أعمال مشابهة
-  const similarWorks = allData.filter(
-    (item) => item.genre === show.genre && item.id !== show.id
-  );
+    const data: { data: Content[] } = await res.json();
+    console.log("API response:", data);
 
-  // جلب طاقم العمل كامل
-  const cast: Actor[] =
-    (show.crew?.cast
-      ?.map((actorId) => actors.find((a) => a.id === actorId))
-      .filter((a) => a !== undefined) as Actor[]) || [];
+    // البحث عن العنصر المناسب حسب UUID
+    const show = data.data.find((item) => item.uuid === id);
 
-  return (
-    <DetailsClient
-      show={show}
-      type={type}
-      similarWorks={similarWorks}
-      cast={cast}
-      producer={show.crew?.producer} // الممثلين
-    />
-  );
+    if (!show) {
+      console.error("Content not found");
+      return (
+        <p className="text-white text-center mt-20">المحتوى غير موجود</p>
+      );
+    }
+
+    // الأعمال المشابهة (مؤقت، لو تريد جلبها من API حسب النوع أو التصنيف)
+    const similarWorks: Content[] = data.data.filter(
+      (item) => item.uuid !== show.uuid && item.type === show.type
+    );
+
+    const cast: Actor[] = []; // فارغ حاليا
+
+    return (
+      <DetailsClient
+        show={show}
+        type={type}
+        similarWorks={similarWorks}
+        cast={cast}
+        // producer={show.producer}
+      />
+    );
+  } catch (err) {
+    console.error("Fetch error:", err);
+    return (
+      <p className="text-white text-center mt-20">
+        حدث خطأ أثناء جلب المحتوى
+      </p>
+    );
+  }
 }

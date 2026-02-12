@@ -41,12 +41,12 @@ export default function Header() {
               >
                 الرئيسية
               </Link>
-              <Link
+              {/* <Link
                 href="/about"
                 className="text-white hover:text-red-500 transition-colors whitespace-nowrap"
               >
                 نحن
-              </Link>
+              </Link> */}
               <Link
                 href="/series"
                 className="text-white hover:text-red-500 transition-colors whitespace-nowrap"
@@ -148,7 +148,7 @@ export default function Header() {
             </Link>
 
             <Link
-              href="/auth"
+              href="/login"
               className="text-white hover:text-red-500 transition-colors w-6 h-6 flex items-center justify-center"
             >
               <i className="ri-user-line w-5 h-5 flex items-center justify-center"></i>
@@ -186,12 +186,12 @@ export default function Header() {
               >
                 الرئيسية
               </Link>
-               <Link
+               {/* <Link
                 href="/about"
                 className="text-white hover:text-red-500 transition-colors whitespace-nowrap"
               >
                 نحن
-              </Link>
+              </Link> */}
               <Link
                 href="/series"
                 className="text-white hover:text-red-500 transition-colors"

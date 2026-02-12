@@ -1,32 +1,62 @@
-"use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Show , Episode  } from "../../../../models/type";
+'use client';
 
+import { useState, useEffect, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { Content, Episode } from "@/types/content";
 
 interface WatchClientProps {
-  show: Show;
-  allData: Show[];
+  show: Content;
   type: string;
 }
 
-
-export default function WatchClient({ show, allData, type }: WatchClientProps) {
+export default function WatchClient({ show, type }: WatchClientProps) {
   const router = useRouter();
+  const backendUrl = "http://localhost:8000";
 
-  // إذا فيه حلقات اختار الحلقة الأولى، وإذا ما فيه استخدم الفيديو الرئيسي للفيلم
+  // جمع كل الحلقات
+  const allEpisodes: Episode[] = useMemo(() => {
+    const directEpisodes = show.episodes || [];
+    const seasonEpisodes =
+      show.seasons?.flatMap((season: { episodes: any }) => season.episodes) || [];
+    return [...directEpisodes, ...seasonEpisodes];
+  }, [show]);
+
   const [currentEpisode, setCurrentEpisode] = useState<Episode | null>(
-    show.episodes?.[0] || (show.videoEmbedUrl ? { id: 0, title: show.title, videoEmbedUrl: show.videoEmbedUrl } : null)
+    allEpisodes[0] || null
   );
+
+  // جلب كل الأعمال من نفس النوع الدقيق
+  const [similarWorks, setSimilarWorks] = useState<Content[]>([]);
+
+  useEffect(() => {
+    fetch(`${backendUrl}/api/v1/contents?type=${type}&limit=20`)
+      .then(res => res.json())
+      .then(data => {
+        // فلترة الأعمال التي تطابق نوع العمل الفعلي فقط
+        const filtered = data.data.filter(
+          (item: Content) =>
+            item.uuid !== show.uuid && item.type === show.type
+        );
+        setSimilarWorks(filtered);
+      })
+      .catch(err => console.error(err));
+  }, [type, show.uuid, show.type]);
+
+  // حساب عدد الحلقات
+  const totalEpisodes =
+    show.seasons?.reduce(
+      (total: number, season: any) => total + (season.episodes?.length || 0),
+      0
+    ) || show.episodes?.length || 0;
 
   return (
     <main className="bg-gray-900 min-h-screen text-white mx-auto px-4 py-6">
-      
+
       {/* مشغل الفيديو */}
       {currentEpisode ? (
         <section className="mb-6 relative aspect-video rounded-lg overflow-hidden shadow-lg">
           <iframe
-            src={currentEpisode.videoEmbedUrl}
+            src={currentEpisode.video_url || currentEpisode.videoEmbedUrl}
             title={currentEpisode.title}
             allowFullScreen
             className="w-full h-full"
@@ -36,28 +66,27 @@ export default function WatchClient({ show, allData, type }: WatchClientProps) {
           </div>
         </section>
       ) : (
-        <p className="text-gray-300">الفيديو غير متاح</p>
+        <p className="text-gray-300 text-center mt-20">الفيديو غير متاح</p>
       )}
 
-      {/* صف المحتوى */}
+      {/* معلومات المحتوى */}
       <section className="flex flex-col lg:flex-row gap-8">
-        {/* معلومات المحتوى */}
         <article className="flex-1">
           <h1 className="text-3xl font-bold mb-2">{show.title}</h1>
           <div className="flex flex-wrap gap-4 text-sm text-gray-300 mb-3">
-            <span>⭐ {show.rating}</span>
-            <span>🎬 {show.genre}</span>
+            <span>⭐ {show.rating ?? "غير متوفر"}</span>
+            <span>🎬 {show.categories?.map(c => c.name).join(", ")}</span>
             <span>📅 {show.year}</span>
-            {type === "series" && show.seasons && <span>المواسم: {show.seasons}</span>}
+            {show.seasons_count && <span>المواسم: {show.seasons_count}</span>}
           </div>
           <p className="text-gray-400 mb-12">{show.description}</p>
 
-          {/* قائمة الحلقات (لو موجودة) */}
-          {show.episodes && show.episodes.length > 0 && (
-            <aside className="bg-gray-800 rounded-lg p-4 shadow-lg">
+          {/* قائمة الحلقات */}
+          {allEpisodes.length > 0 && (
+            <aside className="bg-gray-800 rounded-lg p-4 shadow-lg mb-6">
               <h2 className="text-xl font-semibold mb-4">الحلقات</h2>
               <ul className="space-y-3 max-h-[250px] overflow-y-auto">
-                {show.episodes.map(ep => (
+                {allEpisodes.map(ep => (
                   <li
                     key={ep.id}
                     onClick={() => setCurrentEpisode(ep)}
@@ -65,7 +94,7 @@ export default function WatchClient({ show, allData, type }: WatchClientProps) {
                       ${currentEpisode?.id === ep.id ? "bg-red-700" : "bg-gray-700 hover:bg-red-600"}`}
                   >
                     <img
-                      src={ep.thumbnail || "/images/default-episode.jpg"}
+                      src={ep.thumbnail || show.poster_image}
                       alt={ep.title}
                       className="w-20 h-12 rounded object-cover flex-shrink-0"
                     />
@@ -80,33 +109,44 @@ export default function WatchClient({ show, allData, type }: WatchClientProps) {
           )}
         </article>
 
-        {/* الأعمال المشابهة */}
+        {/* أعمال مشابهة */}
         <div className="flex flex-col lg:w-[600px] gap-6">
           <aside className="bg-gray-800 rounded-lg p-4 shadow-lg">
             <h2 className="text-xl font-semibold mb-4">
-              {type === "movies" ? "أفلام أخرى" :
-              type === "programs" ? "برامج أخرى" :
-               type === "kids" ? "محتوى أطفال آخر" : "مسلسلات أخرى"}
+              {show.type === "movie"
+                ? "أفلام أخرى"
+                : show.type === "series"
+                ? "مسلسلات أخرى"
+                : show.type === "program"
+                ? "برامج أخرى"
+                : "محتوى مشابه"}
             </h2>
-            <ul className="space-y-3 max-h-[750px]">
-              {allData.map(item => (
-                <li
-                  key={item.id}
-                  onClick={() => router.push(`/watch/${type}/${item.id}`)}
-                  className="flex items-center gap-3 p-3 rounded cursor-pointer transition bg-gray-700 hover:bg-red-600"
-                >
-                  <img
-                    src={item.image || "/images/default-show.jpg"}
-                    alt={item.title}
-                    className="w-20 h-12 rounded object-cover flex-shrink-0"
-                  />
-                  <div>
-                    <h3 className="font-semibold">{item.title}</h3>
-                    <p className="text-xs text-gray-300">{item.genre} • {item.year}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
+
+            {similarWorks.length > 0 ? (
+              <ul className="space-y-3 max-h-[600px] overflow-y-auto">
+                {similarWorks.map(item => (
+                  <li
+                    key={item.uuid}
+                    onClick={() => router.push(`/watch/${type}/${item.uuid}`)}
+                    className="flex items-center gap-3 p-3 rounded cursor-pointer transition bg-gray-700 hover:bg-red-600"
+                  >
+                    <img
+                      src={`${backendUrl}${item.card_image || item.poster_image || "/images/default-show.jpg"}`}
+                      alt={item.title}
+                      className="w-20 h-12 rounded object-cover flex-shrink-0"
+                    />
+                    <div>
+                      <h3 className="font-semibold">{item.title}</h3>
+                      <p className="text-xs text-gray-300">
+                        {item.categories?.map(c => c.name).join(", ")} • {item.year}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-400 text-sm">لا توجد أعمال مشابهة حاليا</p>
+            )}
           </aside>
         </div>
       </section>
